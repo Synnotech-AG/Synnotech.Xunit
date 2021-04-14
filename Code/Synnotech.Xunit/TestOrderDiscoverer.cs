@@ -10,6 +10,16 @@ namespace Synnotech.Xunit
     public sealed class TestOrderDiscoverer : TraitDiscoverer
     {
         /// <summary>
+        /// Gets the type name of this trait discoverer.
+        /// </summary>
+        public const string TypeName = AssemblyInfos.AssemblyName + "." + nameof(TestOrderDiscoverer);
+
+        /// <summary>
+        /// Gets the assembly name where this type resides in.
+        /// </summary>
+        public const string AssemblyName = AssemblyInfos.AssemblyName;
+
+        /// <summary>
         /// Checks if the specified attribute is a <see cref="TestOrderAttribute"/>. If not, then the base class implementation
         /// will handle the attribute. Otherwise, the order of the attribute is returned with the key "Test Order".
         /// </summary>

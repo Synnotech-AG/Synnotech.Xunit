@@ -6,6 +6,7 @@ namespace Synnotech.Xunit
     /// <summary>
     /// Use this attribute to specify the execution order of xunit tests within a test class.
     /// </summary>
+    [TraitDiscoverer(TestOrderDiscoverer.TypeName, TestOrderDiscoverer.AssemblyName)]
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class TestOrderAttribute : Attribute, ITraitAttribute
     {
