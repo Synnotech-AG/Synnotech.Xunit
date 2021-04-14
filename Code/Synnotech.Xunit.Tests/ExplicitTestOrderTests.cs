@@ -4,7 +4,7 @@ using Xunit;
 namespace Synnotech.Xunit.Tests
 {
     [TestCaseOrderer(TestOrderer.TypeName, TestOrderer.AssemblyName)]
-    public static class TestOrderTests
+    public static class ExplicitTestOrderTests
     {
         private static int Value { get; set; } = 1;
 
@@ -18,7 +18,7 @@ namespace Synnotech.Xunit.Tests
 
         [Fact]
         [TestOrder(1)]
-        [Trait("Category", "Some other trait")]
+        [Trait("Category", "Some other trait")] // This attribute is here to ensure that any other trait still works
         public static void Test1()
         {
             Value.Should().Be(1);

@@ -6,6 +6,7 @@
 		<Company>Synnotech AG</Company>
 		<Copyright>Copyright © Synnotech AG 2021</Copyright>
 		<Version>1.0.0</Version>
+		<Description>Extensions for xunit test projects.</Description>
 		<LangVersion>9.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<DocumentationFile>bin/$(Configuration)/$(TargetFramework)/$(AssemblyName).xml</DocumentationFile>
