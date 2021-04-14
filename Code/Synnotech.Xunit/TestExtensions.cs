@@ -13,13 +13,8 @@ namespace Synnotech.Xunit
         /// Writes the specified message to the test output helper.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="message"/> or <paramref name="output"/> is null.</exception>
-        public static void ShouldBeWrittenTo(this string message, ITestOutputHelper output)
-        {
-            message.MustNotBeNull(nameof(message));
-            output.MustNotBeNull(nameof(output));
-
-            output.WriteLine(message);
-        }
+        public static void ShouldBeWrittenTo(this string message, ITestOutputHelper output) =>
+            output.MustNotBeNull(nameof(output)).WriteLine(message);
 
         /// <summary>
         /// Writes the specified exception to the test output helper.
