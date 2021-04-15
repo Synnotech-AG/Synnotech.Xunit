@@ -19,10 +19,24 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReleaseNotes>
+Synntech.Xunit 1.0.0
+--------------------------------
+
+- initial release
+- use the `ShouldBeWrittenTo` extension methods to easily output strings or exceptions to `ITestOutputHelper`
+- use the `TestOrderer` to run all tests within a class from top to bottom, one after another
+- you can also apply the `TestOrderAttribute` to all test cases in a class to order your tests explicitly (`TestOrderer` must still be applied to the class containing the tests)
+- you can find the docs at https://github.com/Synnotech-AG/Synnotech.Xunit
+		</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="xunit.core" Version="2.4.0" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
