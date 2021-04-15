@@ -22,4 +22,4 @@ jobs:
     - name: Build
       run: dotnet build ./Code/Synnotech.Xunit.sln -c Release --no-restore
     - name: Test
-      run: dotnet test ./Code/Synnotech.Xunit.sln -c Release --no-build --verbosity normal
+      run: dotnet test ./Code/Synnotech.Xunit.Tests/Synnotech.Xunit.Tests.csproj -c Release --no-build --verbosity normal
