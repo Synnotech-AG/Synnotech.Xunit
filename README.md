@@ -53,8 +53,8 @@ In testsettings.Development.json:
 
 Your test code:
 ```csharp
-use Xunit;
-use SynnotechTestSettings = Synnotech.Xunit.TestSettings;
+using Xunit;
+using SynnotechTestSettings = Synnotech.Xunit.TestSettings;
 
 namespace MyTestProject
 {
