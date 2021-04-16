@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 namespace Synnotech.Xunit
 {
     /// <summary>
-    /// Provides an ambient context for test settings. This class loads up to three settings
+    /// Provides an ambient context for test settings. This class loads up to three
     /// optional configuration files ("testsettings.json", "testsettings.Development.json",
     /// and "testsettings.Build.json") and provides the <see cref="Configuration"/> property
     /// to access them. The files are searched for in the current working directory - thus you
