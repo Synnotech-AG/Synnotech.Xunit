@@ -1,21 +1,32 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Synnotech.Xunit\Synnotech.Xunit.csproj" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
-		<PackageReference Include="xunit" Version="2.4.1" />
-		<PackageReference Include="FluentAssertions" Version="5.10.3" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
+    <ItemGroup>
+        <ProjectReference Include="..\Synnotech.Xunit\Synnotech.Xunit.csproj" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="FluentAssertions" Version="5.10.3" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
 
-	</ItemGroup>
+    <ItemGroup>
+        <None Update="testsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="testsettings.Development.json" Condition="Exists('testsettings.Development.json')">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="testsettings.Build.json" Condition="Exists('testsettings.Build.json')">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
 </Project>

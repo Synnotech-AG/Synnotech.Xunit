@@ -1,0 +1,4 @@
+{
+    "value2": "value 2 - overwritten in testsettings.Development.json",
+    "value3": "value 3 - overwritten in testsettings.Development.json"
+}
