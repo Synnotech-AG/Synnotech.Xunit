@@ -9,6 +9,7 @@
 		<Description>Extensions for xunit test projects.</Description>
 		<LangVersion>9.0</LangVersion>
 		<Nullable>enable</Nullable>
+		<IsPackable>true</IsPackable>
 		<DocumentationFile>bin/$(Configuration)/$(TargetFramework)/$(AssemblyName).xml</DocumentationFile>
 		<PackageIcon>synnotech-logo.png</PackageIcon>
 		<PackageProjectUrl>https://github.com/Synnotech-AG/Synnotech.Migrations</PackageProjectUrl>

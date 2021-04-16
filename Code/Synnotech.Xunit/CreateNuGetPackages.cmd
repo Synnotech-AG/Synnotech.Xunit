@@ -1,0 +1,1 @@
+dotnet pack ./Synnotech.Xunit.csproj --configuration Release /p:ContinuousIntegrationBuild=true
