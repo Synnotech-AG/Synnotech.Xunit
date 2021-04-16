@@ -114,7 +114,8 @@ using Xunit;
 
 namespace TestProject
 {
-    [TestCaseOrderer(TestOrderer.TypeName, TestOrderer.AssemblyName)] // This line enables TestOrderer on this test class
+    // The following attribute enables TestOrderer on this test class
+    [TestCaseOrderer(TestOrderer.TypeName, TestOrderer.AssemblyName)] 
     public class TestClass
     {
         private static int Value { get; set; } = 1;
@@ -150,7 +151,8 @@ using Xunit;
 
 namespace TestProject
 {
-    [TestCaseOrderer(TestOrderer.TypeName, TestOrderer.AssemblyName)] // This line enables TestOrderer on this test class
+    // The following attribute enables TestOrderer on this test class
+    [TestCaseOrderer(TestOrderer.TypeName, TestOrderer.AssemblyName)]
     public class TestClass
     {
         private static int Value { get; set; } = 1;
