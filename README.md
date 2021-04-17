@@ -183,7 +183,7 @@ namespace TestProject
 }
 ```
 
-Please keep in mind: if you apply the `TestOrderAttribute`, you need to apply it to all tests of a class - otherwise the `TestOrderer` will use a different the source code numbers to order your tests. And no matter if you use the `TestOrderAttribute` or not, you must decorate the corresponding class with `[TestCaseOrderer(TestOrderer.TypeName, TestOrderer.AssemblyName)]`, otherwise the default ordering of xunit will be applied.
+Please keep in mind: when you apply the `TestOrderAttribute`, you need to apply it to all tests of a class - otherwise the `TestOrderer` will use the line numbers to order your tests. And no matter whether you use the `TestOrderAttribute` or not, you must decorate the corresponding class with `[TestCaseOrderer(TestOrderer.TypeName, TestOrderer.AssemblyName)]`, otherwise the default ordering of xunit will be applied.
 
 Furthermore, if you access the same third-party system in several test classes, you should generally consider running your test sequentially. Dependending on your data access layer, concurrent requests might lead to unexpected test outcome when two or more tests in different classes access the system concurrently. You can do that by placing the following lines of code into a new file in your xunit test project:
 
