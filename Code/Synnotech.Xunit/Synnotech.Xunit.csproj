@@ -11,6 +11,7 @@
 		<Nullable>enable</Nullable>
 		<IsPackable>true</IsPackable>
 		<DocumentationFile>bin/$(Configuration)/$(TargetFramework)/$(AssemblyName).xml</DocumentationFile>
+		<TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
 		<PackageIcon>synnotech-logo.png</PackageIcon>
 		<PackageProjectUrl>https://github.com/Synnotech-AG/Synnotech.Xunit</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Synnotech-AG/Synnotech.Xunit.git</RepositoryUrl>
