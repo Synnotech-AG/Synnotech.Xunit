@@ -1,19 +1,104 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.IO;
+using FluentAssertions;
 using Xunit;
 
-namespace Synnotech.Xunit.Tests
+namespace Synnotech.Xunit.Tests;
+
+public sealed class TestSettingsTests
 {
-    /* The following tests use the hierarchy of testsettings.json, testsettings.Development.json, and testsettings.Build.json.
-     * Check the files to see the three values and how they are overwritten. */
-    public static class TestSettingsTests
+    public TestSettingsTests()
     {
-        [Fact]
-        public static void ReadValue1() => TestSettings.Configuration["value1"].Should().Be("value 1 - in testsettings.json");
+        DeleteFileIfNecessary("testsettings.json");
+        DeleteFileIfNecessary("testsettings.Build.json");
+        DeleteFileIfNecessary("testsettings.Development.json");
+    }
 
-        [Fact]
-        public static void ReadValue2() => TestSettings.Configuration["value2"].Should().Be("value 2 - overwritten in testsettings.Development.json");
+    [Fact]
+    public void LoadNoSettings() =>
+        TestSettings.LoadConfiguration().GetChildren().Should().BeEmpty();
 
-        [Fact]
-        public static void ReadValue3() => TestSettings.Configuration["value3"].Should().Be("value 3 - overwritten in testsettings.Build.json");
+    [Fact]
+    public void LoadOnlyTestSettings()
+    {
+        File.WriteAllText("testsettings.json", "{ \"someValue\": \"Foo\" }");
+
+        var configuration = TestSettings.LoadConfiguration();
+        var someValue = configuration["someValue"];
+
+        someValue.Should().Be("Foo");
+    }
+
+    [Fact]
+    public void OverwriteValueInDevelopmentSettings()
+    {
+        File.WriteAllText("testsettings.json", "{ \"aValue\": \"Foo\" }");
+        File.WriteAllText("testsettings.Development.json", "{ \"aValue\": \"Bar\" }");
+
+        var configuration = TestSettings.LoadConfiguration();
+        var aValue = configuration["aValue"];
+
+        aValue.Should().Be("Bar");
+    }
+
+    [Fact]
+    public void IgnoreBuildSettingsWhenBuildServerModeIsOff()
+    {
+        File.WriteAllText("testsettings.json", "{ \"theValue\": \"Foo\" }");
+        File.WriteAllText("testsettings.Development.json", "{ \"theValue\": \"Bar\" }");
+        File.WriteAllText("testsettings.Build.json", "{ \"theValue\": \"Baz\" }");
+
+        var configuration = TestSettings.LoadConfiguration();
+        var theValue = configuration["theValue"];
+
+        theValue.Should().Be("Bar");
+        configuration.Providers.Should().HaveCount(2, "testSettings.Build.json was not loaded");
+    }
+
+    [Fact]
+    public void IgnoreDevelopmentSettingsWhenBuildServerModeIsOn()
+    {
+        File.WriteAllText("testsettings.json", "{ \"theValue\": \"Foo\" }");
+        File.WriteAllText("testsettings.Development.json", "{ \"theValue\": \"Bar\" }");
+        File.WriteAllText("testsettings.Build.json", "{ \"theValue\": \"Baz\" }");
+
+        var configuration = TestSettings.LoadConfiguration(isInBuildServerMode: true);
+        var theValue = configuration["theValue"];
+
+        theValue.Should().Be("Baz");
+        configuration.Providers.Should().HaveCount(2, "testsettings.Development.json was not loaded");
+    }
+
+    [Fact]
+    public void IncludeDevelopmentSettingsInBuildServerMode()
+    {
+        File.WriteAllText("testsettings.json", "{ \"theValue\": \"Foo\" }");
+        File.WriteAllText("testsettings.Development.json", "{ \"testConfiguration\": { \"loadDevelopmentSettingsFileInBuildServerMode\": true }, \"theValue\": \"Bar\" }");
+        File.WriteAllText("testsettings.Build.json", "{ \"theValue\": \"Baz\" }");
+
+        var configuration = TestSettings.LoadConfiguration(isInBuildServerMode: true);
+        var theValue = configuration["theValue"];
+
+        theValue.Should().Be("Bar");
+        configuration.Providers.Should().HaveCount(3, "all JSON file were included because of loadDevelopmentSettingsFileInBuildServerMode");
+    }
+
+    [Fact]
+    public void LoadEnvironmentVariables()
+    {
+        Environment.SetEnvironmentVariable("SynnotechXunit_TestVariable", "Foo", EnvironmentVariableTarget.Process);
+
+        File.WriteAllText("testsettings.json", "{ \"testConfiguration\": { \"loadEnvironmentVariables\": true, \"environmentVariablesPrefix\": \"SynnotechXunit_\" }, \"theValue\": \"Foo\" }");
+
+        var configuration = TestSettings.LoadConfiguration();
+        var environmentVariableValue = configuration["TestVariable"];
+
+        environmentVariableValue.Should().Be("Foo");
+    }
+
+    private static void DeleteFileIfNecessary(string filePath)
+    {
+        if (File.Exists(filePath))
+            File.Delete(filePath);
     }
 }

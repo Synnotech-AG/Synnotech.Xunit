@@ -1,7 +1,6 @@
-﻿namespace Synnotech.Xunit
+﻿namespace Synnotech.Xunit;
+
+internal static class AssemblyInfos
 {
-    internal static class AssemblyInfos
-    {
-        public const string AssemblyName = "Synnotech.Xunit";
-    }
+    public const string AssemblyName = "Synnotech.Xunit";
 }
