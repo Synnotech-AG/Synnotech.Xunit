@@ -43,5 +43,9 @@
 
     <ItemGroup>
         <None Include="../../synnotech-logo.png" Pack="true" PackagePath="\" />
+        <Content Include="Synnotech.Xunit.targets">
+            <Pack>true</Pack>
+            <PackagePath>build\</PackagePath>
+        </Content>
     </ItemGroup>
 </Project>

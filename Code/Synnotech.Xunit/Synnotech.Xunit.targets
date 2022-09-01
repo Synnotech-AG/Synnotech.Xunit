@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+    <Target Name="CopyTestSettings"
+            BeforeTargets="BeforeBuild">
+        <ItemGroup>
+            <None Update="testsettings.Development.json" Condition="Exists('testsettings.Development.json')">
+                <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            </None>
+            <None Update="testsettings.Build.json" Condition="Exists('testsettings.Build.json')">
+                <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            </None>
+            <None Update="testsettings.json" Condition="Exists('testsettings.json')">
+                <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            </None>
+        </ItemGroup>
+    </Target>
+</Project>
