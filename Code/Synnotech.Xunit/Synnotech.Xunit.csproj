@@ -5,7 +5,7 @@
         <Authors>Synnotech AG</Authors>
         <Company>Synnotech AG</Company>
         <Copyright>Copyright © Synnotech AG 2021</Copyright>
-        <Version>1.1.0</Version>
+        <Version>1.2.0</Version>
         <Description>Extensions for xunit test projects.</Description>
         <LangVersion>10.0</LangVersion>
         <Nullable>enable</Nullable>
@@ -22,11 +22,13 @@
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReleaseNotes>
-            Synntech.Xunit 1.1.0
-            --------------------------------
+Synntech.Xunit 1.2.0
+--------------------------------
 
-            - added new class `TestSettings` that loads three optional configuration files: testsettings.json, testsettings.Development.json, and testsettings.Build.json in the working directory
-            - you can find the docs at https://github.com/Synnotech-AG/Synnotech.Xunit
+- added possibility to load environment variables
+- instead of using the default configuration, there is now a TestSettings.LoadConfiguration method which can be adjusted
+- introduced Build Server mode that excludes testsettings.Development.json by default
+- you can find the docs at https://github.com/Synnotech-AG/Synnotech.Xunit
         </PackageReleaseNotes>
     </PropertyGroup>
 
