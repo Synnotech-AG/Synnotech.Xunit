@@ -9,11 +9,12 @@ namespace Synnotech.Xunit;
 /// Provides an ambient context for test settings. This class loads up to three
 /// optional configuration files ("testsettings.json", "testsettings.Development.json",
 /// and "testsettings.Build.json") as well as environment variables and
-/// provides the <see cref="Configuration" /> property  to access them
+/// provides the <see cref="Configuration" /> property to access them
 /// (if you don't want to use the default settings, you can omit the
 /// <see cref="Configuration" /> property and instead call <see cref="LoadConfiguration" />.
-/// The files are searched for in the current working directory - thus you
-/// should copy the JSON files to the output directory as part of your build.
+/// Synnotech.Xunit will automatically copy testsettings.json, testsettings.Development.json,
+/// and testsettings.Build.json to the output directory if they are present right next
+/// to your csproj file of your test project.
 /// </para>
 /// <para>
 /// All of the sources are optional and can be configured
@@ -81,7 +82,7 @@ public static class TestSettings
 
     /// <summary>
     /// <para>
-    /// Loads an <see cref="IConfiguration" /> object from three files testsettings.json, testsettings.Build.json,
+    /// Loads an <see cref="IConfiguration" /> object from three optional files testsettings.json, testsettings.Build.json,
     /// and testsettings.Development.json, and from environment variables. All of the sources are optional and
     /// can be configured either via the parameters of this method, or by supplying a dedicated section in at least one
     /// of the JSON files:
@@ -131,9 +132,9 @@ public static class TestSettings
     /// </list>
     /// </summary>
     /// <param name="testsettingsFileName">
-    /// The name of the default test settings file ("testsettings.json").
+    /// The name of the default test settings file (testsettings.json).
     /// </param>
-    /// <param name="developmentFileName">The name of the local development file (testsettings.Development.json").</param>
+    /// <param name="developmentFileName">The name of the local development file (testsettings.Development.json).</param>
     /// <param name="buildServerFileName">The name of the build server file (testsettings.Build.json).</param>
     /// <param name="isInBuildServerMode">
     /// The value indicating whether Build Server mode is turned on. If this value is set to null,
@@ -141,12 +142,12 @@ public static class TestSettings
     /// </param>
     /// <param name="isInBuildServerModeEnvironmentVariableName">
     /// The name of the environment variable that indicates whether Build Server mode is active.
-    /// The value of this environment variable must be either "True" or "1" for Build Server mode to
+    /// The value of this environment variable (not the parameter) must be either "True" or "1" for Build Server mode to
     /// be activated.
     /// </param>
     /// <param name="loadEnvironmentVariables">
     /// The value indicating whether the returned <see cref="IConfiguration" /> object will also contain
-    /// values from environment variables. If this value is set null, this method will try to obtain the
+    /// values from environment variables. If this value is set to null, this method will try to obtain the
     /// value from one of the JSON files.
     /// </param>
     /// <param name="environmentVariablesPrefix">

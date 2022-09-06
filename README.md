@@ -5,15 +5,15 @@
 [![Synnotech Logo](synnotech-large-logo.png)](https://www.synnotech.de/)
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://github.com/Synnotech-AG/Synnotech.Xunit/blob/main/LICENSE)
-[![NuGet](https://img.shields.io/badge/NuGet-1.2.0-blue.svg?style=for-the-badge)](https://www.nuget.org/packages/Synnotech.Xunit/)
+[![NuGet](https://img.shields.io/badge/NuGet-1.2.1-blue.svg?style=for-the-badge)](https://www.nuget.org/packages/Synnotech.Xunit/)
 
 # How to Install
 
-Synnotech.Xunit is compiled against [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard) and thus supports all major plattforms like .NET 5, .NET Core, .NET Framework 4.6.1 or newer, Mono, Xamarin, UWP, or Unity.
+Synnotech.Xunit is compiled against [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard) and thus supports all major plattforms like .NET 6, .NET Core, .NET Framework 4.6.1 or newer, Mono, Xamarin, UWP, or Unity.
 
 Synnotech.Xunit is available as a [NuGet package](https://www.nuget.org/packages/Synnotech.Xunit/) and can be installed via:
 
-- **Package Reference in csproj**: `<PackageReference Include="Synnotech.Xunit" Version="1.2.0" />`
+- **Package Reference in csproj**: `<PackageReference Include="Synnotech.Xunit" Version="1.2.1" />`
 - **dotnet CLI**: `dotnet add package Synnotech.Xunit`
 - **Visual Studio Package Manager Console**: `Install-Package Synnotech.Xunit`
 
@@ -23,7 +23,7 @@ Synnotech.Xunit is available as a [NuGet package](https://www.nuget.org/packages
 
 Synnotech.Xunit comes with a class called `TestSettings` that allows you to customize tests via configuration files. It loads up to three optional configuration files ("testsettings.json", "testsettings.Development.json", and "testsettings.Build.json") and provides the `Configuration` property to access an `IConfiguration` instance that holds the loaded configuration. You can rely on all the goodness of Microsoft.Extensions.Configuration that you know from ASP.NET Core apps.
 
-This is especially useful for integration tests where you target different databases on different test systems (e.g. individual dev machines and build server). Together with packages like [Xunit.SkippableFact](https://www.nuget.org/packages/Xunit.SkippableFact/), you can easily customize your integration tests.
+This is especially useful for integration tests where you target different databases on different test systems (e.g. individual dev machines vs. build server). Together with packages like [Xunit.SkippableFact](https://www.nuget.org/packages/Xunit.SkippableFact/), you can easily customize your integration tests.
 
 A common use case might look like this:
 
@@ -52,32 +52,34 @@ In testsettings.Development.json:
 ```
 
 Your test code:
+
 ```csharp
 using Xunit;
 using SynnotechTestSettings = Synnotech.Xunit.TestSettings;
 
-namespace MyTestProject
+namespace MyTestProject;
+
+public static class TestSettings
 {
-    public static class TestSettings
+    public static void SkipDatabaseTestIfNecessary() =>
+        Skip.IfNot(SynnotechTestSettings.Configuration.GetValue<bool>("database:areIntegrationTestsEnabled");
+        
+    public static string GetConnectionString() =>
+        SynnotechTestSettings.Configuration["database:connectionString"];
+}
+
+public class DatabaseIntegrationTests
+{
+    [SkippableFact] // This attribute is in Xunit.SkippableFact
+    public async Task ConnectToDatabase()
     {
-        public static void SkipDatabaseTestIfNecessary() =>
-            Skip.IfNot(SynnotechTestSettings.Configuration.GetValue<bool>("database:areIntegrationTestsEnabled");
-            
-        public static string GetConnectionString() =>
-            SynnotechTestSettings.Configuration["database:connectionString"];
-    }
-    
-    public class DatabaseIntegrationTests
-    {
-        [SkippableFact] // This attribute is in Xunit.SkippableFact
-        public async Task ConnectToDatabase()
-        {
-            TestSettings.SkipDatabaseTestIfNecessary();
-            
-            var connectionString = TestSettings.GetConnectionString();
-            await using var sqlConnection = new SqlConnection(connectionString);
-            await sqlConnection.OpenAsync();
-        }
+        TestSettings.SkipDatabaseTestIfNecessary();
+        
+        var connectionString = TestSettings.GetConnectionString();
+        await using var sqlConnection = new SqlConnection(connectionString);
+        await sqlConnection.OpenAsync();
+        
+        // Test something using the sqlConnection
     }
 }
 ```
@@ -88,21 +90,37 @@ General recommendations for test settings:
 - your version control system should ignore `testsettings.*.json` files. This way, each developer can create this file locally to provide custom settings according to his or her environment
 - build servers should provide testsettings.Build.json to customize the settings for test runs in automated builds.
 
-`TestSettings` will search for the three mentioned files in the working directory - please ensure to copy the corresponding json files to the output directory. You can achieve this by adding the following `ItemGroup` to your test csproj file:
+The three testsettings files will be automatically copied to the output directory when you place them next to the csproj file of your test project. When loading these files, Synnotech.Xunit will determine if it should run in Build Server mode. In Build Server mode, the `IConfiguration` instance will only contain testsettings.json, testsettings.Build.json, and environment variables. In non Build Server mode, testsettings.Build.json is replaced with testsettings.Development.json. Synnotech.Xunit determines this by trying to load all three files, determining if Build Server mode is active, and then loading the configuration again with only the files you need (the reason for this complex approach is that there is no dedicated Composition Root in xunit that we could hook into).
 
-```csproj
-<Project Sdk="Microsoft.NET.Sdk">
-    <!--Other groups omitted for sake of brevity-->
-    <ItemGroup>
-        <None Update="testsettings.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="testsettings.Development.json" Condition="Exists('testsettings.Development.json')">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-</Project>
+You usually want to use an environment variable that is defined on your build server, but not on your dev machines (e.g. GitLab defines an environment variable called "CI" which is set to "True") to determine whether Build Server mode is active. You can customize this behavior by placing a dedicated section called "testConfiguration" in one of your JSON files (typically testsettings.json). This section is structured like this:
+
+```jsonc
+{
+    "testConfiguration": {
+
+        // The name of the environment variable that determines whether Build Server mode is active.
+        // The value of this environment variable must be either "True" or "1" so that 
+        // Synnotech.Xunit actives this mode.
+        "isInBuildServerModeEnvironmentVariableName": "CI", 
+
+         // The value indicating whether environment variables should be loaded, too
+        "loadEnvironmentVariables": true,
+
+        // If you set this value, only the environment variables with this prefix will be loaded.
+        // The prefix will be stripped from environment variable name when it is added to
+        // the IConfiguration instance (default behavior of Microsoft.Extensions.Configuration).
+        "environmentVariablesPrefix": "SynnotechTest_", 
+
+        // The value indicating whether the testsettings.Development.json file should also
+        // be loaded in Build Server mode. Usually, you only want to set this value to true
+        // when you need to replicate a certain behavior of the build server on a local
+        // dev machine.
+        "loadDevelopmentSettingsFileInBuildServerMode": false
+    }
+}
 ```
+
+If you want even more control, you can use the `TestSettings.LoadConfiguration` method instead of accessing the default `TestSettings.Configuration` instance. Check its XML comments for detailed instructions.
 
 ## Run tests in a specific order
 
